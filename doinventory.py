@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-from pprint import pprint
 from csv import DictReader, DictWriter, writer
+from os import path, system
+from pprint import pprint
+
 import openpyxl as xl
 from openpyxl.styles import PatternFill
 from tqdm import tqdm
@@ -68,20 +70,24 @@ def checkonlinesystems(check):
 
 
 def get_inventory():
-    with open("May_inventory.csv", "r") as f:
+    inventory = input('Inventory file name: ')
+    create_copy_of_inventory(f'{inventory}.xlsx')
+    with open(f"{inventory}.csv", "r") as f:
         lines = f.readlines()
-        return lines
+    return lines
 
 
 def get_online_systems():
-    with open("OnlineSystems.csv", "r") as f:
+    online_systems = input('Online Systems file name: ')
+    with open(f'{online_systems}.csv', "r") as f:
         lines = f.readlines()
         return lines
         
 def colorcode(found):
+    file = create_copy_of_inventory()
     print('_'*80)
-    wb = xl.load_workbook("May_inventory2.xlsx")
-    ws = wb["May_inventory"]
+    wb = xl.load_workbook(f'{file}')
+    ws = wb["Finished_Inventory"]
     fill_green = PatternFill(patternType="solid", fgColor="00FF00")
     fill_red = PatternFill(patternType="solid", fgColor="FF0000")
     pbar =  tqdm(range(len(found)),desc='Color coding in progress: ')
@@ -94,14 +100,33 @@ def colorcode(found):
                     # print(f'Found {item} : cell {cell.value}')
                     cell.fill = fill_green
                     # print('Attempting to colorcode cell Green')
-                    wb.save("May_inventory2.xlsx")
-        pbar.update()
-    pbar.close()
-    # print('From colorcode:')
-    print('Colorcoded Inventory')
+                    wb.save(file)
+    pbar.close()    
+    # sorted_inventory(file)
+    print('Finished Inventory')
+
+
+# def sorted_inventory(file):
+#     pass
+#     wb = xl.load_workbook(file)
+#     ws = wb["Finished_Inventory"]
+#     ws.sort_values(by="Serial Number", cellColor)
+#     wb.save(file)
+#     print('Sorted Inventory')
+#     print('_'*80)
+
+
+
+def create_copy_of_inventory(file):
+    wb = xl.load_workbook(file)
+    ws = wb["May_inventory"]
+    file_new = f'{file}_new.xlsx'
+    wb.save(file_new)
+    
+    
 
 
 if __name__ == "__main__":
     serialsfound = doinventory()
     colorcode(serialsfound)
-    print('Finished Inventory\nPlease check items not found in local file')
+    print('Colorcoded Inventory\nPlease check items not found in local file')
