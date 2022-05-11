@@ -41,10 +41,10 @@ def doinventory(inventory_name, online_systems):
 
     with open("serialsnotfound.csv", "w") as f:
         for item in serialsnotfound:
-            f.write(item)
+            f.write(f'{item},\n')
     with open("serialsfound.csv", "w") as f:
-        for item in serialsnotfound:
-            f.write(item)
+        for item in serialsfound:
+            f.write(f'{item},\n')
     print('*'*80)
     return serialsfound
 
@@ -143,8 +143,8 @@ def main():
         ''')
         print('*'*80+'\n')
         input('Press Enter to continue...\n')
-        inventory = input('Inventory file name: ')
-        online_systems = input('Online Systems file name: ')
+        inventory = 'May_inventory' #input('Inventory file name: ')
+        online_systems = 'OnlineSystems' #input('Online Systems file name: ')
         print('*'*80)
         serialsfound = doinventory(inventory, online_systems)
         colorcode(serialsfound,inventory)
