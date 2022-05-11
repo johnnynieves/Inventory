@@ -16,7 +16,7 @@ def doinventory(inventory_name, online_systems):
         line = line.split(",")
         if line[3]:
             check = check + 1
-            checkingNone = (checkonlinesystems(line[3], online_systems))
+            checkingNone = (checkonlinesystems(line[3].strip(), online_systems))
             if checkingNone == None:
                 serialsnotfound.append(line[3])
             else:
@@ -41,10 +41,10 @@ def doinventory(inventory_name, online_systems):
 
     with open("serialsnotfound.csv", "w") as f:
         for item in serialsnotfound:
-            f.write(f'{item},\n')
+            f.write(f'{item}\n')
     with open("serialsfound.csv", "w") as f:
         for item in serialsfound:
-            f.write(f'{item},\n')
+            f.write(f'{item}\n')
     print('*'*80)
     return serialsfound
 
@@ -57,7 +57,7 @@ def checkonlinesystems(check, online_systems):
     found = 0
     
     for serial in onlinesys:
-        serial = serial.split(",")
+        serial = serial.strip().split(",")
         
         if serial[3] != check:
             serialsnotfound.append(check)
@@ -86,7 +86,7 @@ def colorcode(found,inventory):
     wb = xl.load_workbook(f'{file}')
     ws = wb["inventory"]
     fill_green = PatternFill(patternType="solid", fgColor="00FF00")
-    fill_red = PatternFill(patternType="solid", fgColor="FF0000")
+    # fill_red = PatternFill(patternType="solid", fgColor="FF0000")
     pbar =  tqdm(range(len(found)),desc='Color coding in progress: ')
     for item in found:
         # print(f'Looking for {item}')
@@ -98,9 +98,8 @@ def colorcode(found,inventory):
                     cell.fill = fill_green
                     # print('Attempting to colorcode cell Green')
                     wb.save(file)
-            
         pbar.update()
-    pbar.close()    
+    pbar.close()
     # sorted_inventory(file)
     print('Finished Inventory')
     print(f'Refer to colorcoded excel file {file} on your local directory\nIt shoulb be the same place your initial inventory file was placed.')
@@ -144,8 +143,8 @@ def main():
         ''')
         print('*'*80+'\n')
         input('Press Enter to continue...\n')
-        inventory = 'May_inventory' #input('Inventory file name: ')
-        online_systems = 'OnlineSystems' #input('Online Systems file name: ')
+        inventory = input('Inventory file name: ')
+        online_systems = input('Online Systems file name: ')
         print('*'*80)
         serialsfound = doinventory(inventory, online_systems)
         colorcode(serialsfound,inventory)
