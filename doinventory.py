@@ -98,6 +98,7 @@ def colorcode(found,inventory):
                     cell.fill = fill_green
                     # print('Attempting to colorcode cell Green')
                     wb.save(file)
+            
         pbar.update()
     pbar.close()    
     # sorted_inventory(file)
